@@ -71,6 +71,10 @@
     "link-list": "npm ls --depth=0 --link=true"
   },
   "dependencies": {
+    "@cornerstonejs/core": "^3.10.11",
+    "@cornerstonejs/dicom-image-loader": "^3.10.12",
+    "@cornerstonejs/nifti-volume-loader": "^3.10.12",
+    "@cornerstonejs/tools": "^3.10.12",
     "execa": "^8.0.1"
   },
   "optionalDependencies": {
@@ -93,8 +97,8 @@
     "@babel/preset-env": "7.24.7",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.13.0",
-    "prettier": "^3.3.3",
     "patch-package": "^8.0.0",
+    "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "0.6.9"
   },
   "husky": {

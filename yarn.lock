@@ -1443,6 +1443,16 @@
   resolved "https://registry.yarnpkg.com/@cornerstonejs/codec-openjph/-/codec-openjph-2.4.5.tgz#8690b61a86fa53ef38a70eee9d665a79229517c0"
   integrity sha512-MZCUy8VG0VG5Nl1l58+g+kH3LujAzLYTfJqkwpWI2gjSrGXnP6lgwyy4GmPRZWVoS40/B1LDNALK905cNWm+sg==
 
+"@cornerstonejs/core@^3.10.11":
+  version "3.10.11"
+  resolved "https://registry.yarnpkg.com/@cornerstonejs/core/-/core-3.10.11.tgz#acf319bacd3f23736ce117e3eae52e233e50c366"
+  integrity sha512-LjpvBEzufCxbFL5P+zea9MjxRW8Wtc06WMYkyEyeaQ9GjuoWo8lVcA96OF/sH8ZOeR8bnebwCtfthCsnVSp41Q==
+  dependencies:
+    "@kitware/vtk.js" "32.12.1"
+    comlink "^4.4.1"
+    gl-matrix "^3.4.3"
+    loglevel "^1.9.2"
+
 "@cornerstonejs/core@^3.9.5":
   version "3.9.5"
   resolved "https://registry.yarnpkg.com/@cornerstonejs/core/-/core-3.9.5.tgz#b42d8b93d2862b9673963f238e56109f299ca11e"
@@ -1452,6 +1462,21 @@
     comlink "^4.4.1"
     gl-matrix "^3.4.3"
     loglevel "^1.9.2"
+
+"@cornerstonejs/dicom-image-loader@^3.10.12":
+  version "3.10.12"
+  resolved "https://registry.yarnpkg.com/@cornerstonejs/dicom-image-loader/-/dicom-image-loader-3.10.12.tgz#760fb0278c9a4c983d10cded2348161018232e59"
+  integrity sha512-Wf/sER/NdfZxUKWsHyY0bN37gE2ipt5NW0DpYY31qWo0KBR6sa3nrWi3h16GeVQd8+zeNhV92yRgyUCJgneJ7Q==
+  dependencies:
+    "@cornerstonejs/codec-charls" "^1.2.3"
+    "@cornerstonejs/codec-libjpeg-turbo-8bit" "^1.2.2"
+    "@cornerstonejs/codec-openjpeg" "^1.2.2"
+    "@cornerstonejs/codec-openjph" "^2.4.5"
+    comlink "^4.4.1"
+    dicom-parser "^1.8.9"
+    jpeg-lossless-decoder-js "^2.1.0"
+    pako "^2.0.4"
+    uuid "^9.0.0"
 
 "@cornerstonejs/dicom-image-loader@^3.9.5":
   version "3.9.5"
@@ -1476,12 +1501,28 @@
     "@itk-wasm/morphological-contour-interpolation" "1.1.0"
     itk-wasm "1.0.0-b.165"
 
+"@cornerstonejs/nifti-volume-loader@^3.10.12":
+  version "3.10.12"
+  resolved "https://registry.yarnpkg.com/@cornerstonejs/nifti-volume-loader/-/nifti-volume-loader-3.10.12.tgz#db88f9842dc0be092ac28f9dca6707925eb6a0ae"
+  integrity sha512-eh/hXg1F+p/9mxP/x01ijtzPgCJd9Tq8nNRYc5lvRcD3JNNGYn5y0hHe93D3OxoPMLqYvc56NRpWb97pihIBfg==
+  dependencies:
+    nifti-reader-js "^0.6.8"
+
 "@cornerstonejs/polymorphic-segmentation@^3.9.5":
   version "3.9.5"
   resolved "https://registry.yarnpkg.com/@cornerstonejs/polymorphic-segmentation/-/polymorphic-segmentation-3.9.5.tgz#d54145b90929f9e9e90f272acf5f416c28ca33e3"
   integrity sha512-6ucJkb0X5CBBx00g3CzJGuLd6x4T99bPyKXa+y9Bek3jC+RyKI4vySS5RRKtQ4N59yuealZkBvV7dT0FseE8og==
   dependencies:
     "@icr/polyseg-wasm" "0.4.0"
+
+"@cornerstonejs/tools@^3.10.12":
+  version "3.10.12"
+  resolved "https://registry.yarnpkg.com/@cornerstonejs/tools/-/tools-3.10.12.tgz#19544fca06f85e167250577889cf1f9c54605cae"
+  integrity sha512-+H3nyHUIB659bHq6UPdaazKSVjHlhbfJaznzMYbVZjAGQo6Xtdb+9SPdY39JN32k4ArVXa6my9b/BVJanF81Fw==
+  dependencies:
+    "@types/offscreencanvas" "2019.7.3"
+    comlink "^4.4.1"
+    lodash.get "^4.4.2"
 
 "@cornerstonejs/tools@^3.9.5":
   version "3.9.5"
@@ -10683,6 +10724,11 @@ fetch-retry@^5.0.2:
   resolved "https://registry.yarnpkg.com/fetch-retry/-/fetch-retry-5.0.6.tgz#17d0bc90423405b7a88b74355bf364acd2a7fa56"
   integrity sha512-3yurQZ2hD9VISAhJJP9bpYFNQrHHBXE2JxxjY5aLEcDi46RmAzJE2OC9FAde0yis5ElW0jTTzs0zfg/Cca4XqQ==
 
+fflate@*:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.8.2.tgz#fc8631f5347812ad6028bbe4a2308b2792aa1dea"
+  integrity sha512-cPJU47OaAoCbg0pBvzsgpTPhmhqI5eJjh/JIu8tPj5q+T7iLvW/JAYUqmE7KOB4R1ZyEhzBaIQpQpardBF5z8A==
+
 fflate@0.7.3:
   version "0.7.3"
   resolved "https://registry.yarnpkg.com/fflate/-/fflate-0.7.3.tgz#288b034ff0e9c380eaa2feff48c787b8371b7fa5"
@@ -15382,6 +15428,13 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
+
+nifti-reader-js@^0.6.8:
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/nifti-reader-js/-/nifti-reader-js-0.6.9.tgz#737b88eb951c6b98841ce888204a9370214b17e5"
+  integrity sha512-oEC35cuYFR0i+KeXhaK0hJz4oSj511Vo7LmO/6iqbxzwek6XWnBi77VURlk4jsnJ86tlJNpYv6ujmSDpPP46Tw==
+  dependencies:
+    fflate "*"
 
 no-case@^3.0.4:
   version "3.0.4"
