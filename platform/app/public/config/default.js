@@ -4,8 +4,8 @@ window.config = {
   name: 'config/default.js',
   routerBasename: null,
   // whiteLabeling: {},
-  extensions: [],
-  modes: [],
+  extensions: ['@ohif/extension-cornerstone-nifti'],
+  modes: ['@ohif/mode-nifti'],
   customizationService: {},
   showStudyList: true,
   // some windows systems have issues with more than 3 web workers
