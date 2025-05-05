@@ -1,5 +1,5 @@
 import * as cornerstone from '@cornerstonejs/core';
-import { setVolumesForViewports, utilities as csUtils } from '@cornerstonejs/core';
+import { setVolumesForViewports } from '@cornerstonejs/core';
 import { createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume-loader';
 
 const OHIFCornerstoneNiftiViewport = props => {
@@ -61,35 +61,32 @@ const OHIFCornerstoneNiftiViewport = props => {
         if (viewport.type === cornerstone.Enums.ViewportType.STACK) {
           // For STACK viewport, just set the first image
           const imageId = imageIds[0];
-          await viewport.setStack([imageId]);
+          // Type cast to StackViewport to access setStack method
+          await (viewport as cornerstone.Types.IStackViewport).setStack([imageId]);
         } else {
           // For VOLUME_3D viewport
           // Assign the volume to the viewport
           await setVolumesForViewports(renderingEngine, [{ volumeId }], [viewportId]);
 
-          // Set the orientation
+          // Set the orientation using cornerstone.Enums.OrientationAxis
           const orientationMap = {
-            axial: csUtils.getOrientationStringLPS(
-              csUtils.orientations.axial.sliceNormal,
-              csUtils.orientations.axial.viewUp
-            ),
-            sagittal: csUtils.getOrientationStringLPS(
-              csUtils.orientations.sagittal.sliceNormal,
-              csUtils.orientations.sagittal.viewUp
-            ),
-            coronal: csUtils.getOrientationStringLPS(
-              csUtils.orientations.coronal.sliceNormal,
-              csUtils.orientations.coronal.viewUp
-            ),
+            axial: cornerstone.Enums.OrientationAxis.AXIAL,
+            sagittal: cornerstone.Enums.OrientationAxis.SAGITTAL,
+            coronal: cornerstone.Enums.OrientationAxis.CORONAL,
           };
 
-          const orientationString =
-            orientationMap[orientation.toLowerCase()] || orientationMap.axial;
+          const orientationAxis = orientationMap[orientation.toLowerCase()] || orientationMap.axial;
 
-          await viewport.setOrientation(orientationString);
-          await viewport.setVolumeOpacity(volumeId, 1);
+          // Type cast to VolumeViewport to access setOrientation method
+          await (viewport as cornerstone.Types.IVolumeViewport).setOrientation(orientationAxis);
+          // Use the correct API to set volume rendering properties
+          await (viewport as cornerstone.Types.IVolumeViewport).setProperties({
+            voiRange: { lower: -1000, upper: 1000 },
+            slabThickness: 0.1,
+          });
         }
 
+        // Set the volume color and opacity
         viewport.render();
       } catch (error) {
         console.error('Error loading NIfTI volume:', error);

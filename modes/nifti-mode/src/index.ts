@@ -1,6 +1,6 @@
 import { hotkeys } from '@ohif/core';
 import toolbarButtons from './toolbarButtons';
-import { id } from './id';
+import id from './id';
 
 function modeFactory({ modeConfiguration }) {
   return {

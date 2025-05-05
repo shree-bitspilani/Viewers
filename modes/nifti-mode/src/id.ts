@@ -1,1 +1,3 @@
-export const id = '@ohif/mode-nifti';
+const id = '@ohif/mode-nifti';
+
+export default id;

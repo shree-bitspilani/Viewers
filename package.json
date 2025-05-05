@@ -107,6 +107,7 @@
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "babel-plugin-istanbul": "^7.0.0",
     "istanbul": "0.4.5",
+    "lerna": "^8.2.2",
     "nyc": "^17.1.0",
     "patch-package": "^8.0.0",
     "playwright-test-coverage": "^1.2.12",
