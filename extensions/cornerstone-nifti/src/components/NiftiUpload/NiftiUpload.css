@@ -1,0 +1,23 @@
+.nifti-upload-drop-area-border-dash {
+  border: 2px dashed #3a3f99;
+  border-radius: 5px;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #5acce6 transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #5acce6;
+  border-radius: 20px;
+}

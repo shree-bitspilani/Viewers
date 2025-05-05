@@ -7,11 +7,12 @@ import getCommandsModule from './getCommandsModule';
 import { cornerstoneNiftiImageLoader } from '@cornerstonejs/nifti-volume-loader';
 import * as cornerstone from '@cornerstonejs/core';
 import { NiftiUploadDialog } from './components';
+import customizationModule from './customizations';
 
 /**
  * NIfTI Extension for OHIF Viewer
  */
-const extension: Types.Extensions.Extension = {
+const extension = {
   /**
    * Unique ID of the extension
    */
@@ -23,7 +24,6 @@ const extension: Types.Extensions.Extension = {
   preRegistration: async ({ servicesManager, configuration = {} }) => {
     console.log('NIfTI Extension preRegistration');
     // Register the NIfTI image loader
-    // Cast the function to any to avoid TypeScript errors about interface mismatches
     cornerstone.imageLoader.registerImageLoader('nifti', cornerstoneNiftiImageLoader as any);
   },
 
@@ -36,12 +36,24 @@ const extension: Types.Extensions.Extension = {
   getCommandsModule,
 
   /**
+   * Customization module for the extension
+   */
+  getCustomizationModule: () => {
+    return [
+      {
+        name: 'default',
+        value: customizationModule,
+      },
+    ];
+  },
+
+  /**
    * Components exposed by this extension
    */
   getUIComponentDefinitions: () => ({
     niftiUploadDialog: NiftiUploadDialog,
   }),
-};
+} as unknown as Types.Extensions.Extension;
 
 console.log('NIfTI Extension loaded');
 console.log('Extension ID:', id);

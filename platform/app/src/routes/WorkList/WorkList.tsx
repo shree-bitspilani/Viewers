@@ -506,11 +506,12 @@ function WorkList({
     'ui.loadingIndicatorProgress'
   );
   const DicomUploadComponent = customizationService.getCustomization('dicomUploadComponent');
+  const NiftiUploadComponent = customizationService.getCustomization('niftiUploadComponent');
 
   const uploadProps =
     DicomUploadComponent && dataSource.getConfig()?.dicomUploadEnabled
       ? {
-          title: 'Upload files',
+          title: 'Upload DICOM files',
           closeButton: true,
           shouldCloseOnEsc: false,
           shouldCloseOnOverlayClick: false,
@@ -532,6 +533,30 @@ function WorkList({
           ),
         }
       : undefined;
+
+  const niftiUploadProps = NiftiUploadComponent
+    ? {
+        title: 'Upload NIFTI files',
+        closeButton: true,
+        shouldCloseOnEsc: false,
+        shouldCloseOnOverlayClick: false,
+        content: () => (
+          <NiftiUploadComponent
+            onComplete={() => {
+              hide();
+              onRefresh();
+            }}
+            onStarted={() => {
+              show({
+                ...niftiUploadProps,
+                // when upload starts, hide the default close button as closing the dialogue must be handled by the upload dialogue itself
+                closeButton: false,
+              });
+            }}
+          />
+        ),
+      }
+    : undefined;
 
   const dataSourceConfigurationComponent = customizationService.getCustomization(
     'ohif.dataSourceConfigurationComponent'
@@ -559,6 +584,7 @@ function WorkList({
               clearFilters={() => setFilterValues(defaultFilterValues)}
               isFiltering={isFiltering(filterValues, defaultFilterValues)}
               onUploadClick={uploadProps ? () => show(uploadProps) : undefined}
+              onNiftiUploadClick={niftiUploadProps ? () => show(niftiUploadProps) : undefined}
               getDataSourceConfigurationComponent={
                 dataSourceConfigurationComponent
                   ? () => dataSourceConfigurationComponent()

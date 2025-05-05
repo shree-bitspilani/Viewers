@@ -20,49 +20,44 @@ const OHIFCornerstoneNiftiViewport = props => {
           ? cornerstone.Enums.ViewportType.STACK
           : cornerstone.Enums.ViewportType.VOLUME_3D,
     },
-    // Custom onElementEnabled callback to load the NIfTI volume
-    onElementEnabled: async ({ element, viewportId, renderingEngineId }) => {
-      // Call the original onElementEnabled if it exists
-      if (props.onElementEnabled) {
-        props.onElementEnabled({ element, viewportId, renderingEngineId });
-      }
+    async onElementEnabled(elementEnabledEvt) {
+      const { element, viewportId } = elementEnabledEvt.detail;
+      const renderingEngine = cornerstone.getRenderingEngine(
+        props.viewportOptions.renderingEngineId
+      );
+      const viewport = renderingEngine.getViewport(viewportId);
 
-      // Get the viewport
-      const renderingEngine = cornerstone.getRenderingEngine(renderingEngineId);
-      const viewport = renderingEngine?.getViewport(viewportId);
-
-      if (!viewport) {
-        console.error('Viewport not found:', viewportId);
+      // Determine the URL for the NIFTI file
+      let url;
+      if (displaySet.isLocalNifti) {
+        // For locally uploaded NIFTI files
+        url = displaySet.niftiURL;
+      } else if (niftiURL) {
+        // For standard displaySet with niftiURL
+        url = niftiURL;
+      } else {
+        console.error('No NIFTI URL found in displaySet:', displaySet);
         return;
       }
 
+      if (!url) {
+        console.error('No NIFTI URL to load');
+        return;
+      }
+
+      // Create NIFTI volumeId and imageIds
       try {
-        // Get imageIds from the display set using nifti-volume-loader
-        const imageIds = await createNiftiImageIdsAndCacheMetadata({
-          url: niftiURL,
-        });
+        const imageIds = await createNiftiImageIdsAndCacheMetadata({ url });
+        const volumeId = `niftiVolume-${Date.now()}`;
 
-        if (!imageIds || !imageIds.length) {
-          console.error('No image IDs were created from the NIfTI file');
-          return;
-        }
+        // Create and cache the volume
+        await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds });
 
-        // Define a volume ID
-        const volumeId = `niftiVolume-${displaySet.displaySetInstanceUID}`;
-
-        // Load the NIfTI volume
-        const volume = await cornerstone.volumeLoader.createAndCacheVolume(volumeId, { imageIds });
-
-        await volume.load();
-
-        // Get the orientation from props or default to AXIAL
-        const orientation = props.viewportOptions?.orientation || 'axial';
-
-        if (viewport.type === cornerstone.Enums.ViewportType.STACK) {
-          // For STACK viewport, just set the first image
-          const imageId = imageIds[0];
-          // Type cast to StackViewport to access setStack method
-          await (viewport as cornerstone.Types.IStackViewport).setStack([imageId]);
+        // Set up the appropriate orientation
+        if (props.viewportOptions?.viewportType === 'stack') {
+          // For STACK viewport - add the volume and first image
+          await cornerstone.volumeLoader.loadVolume(volumeId);
+          viewport.setStack([imageIds[0]]);
         } else {
           // For VOLUME_3D viewport
           // Assign the volume to the viewport
@@ -75,7 +70,7 @@ const OHIFCornerstoneNiftiViewport = props => {
             coronal: cornerstone.Enums.OrientationAxis.CORONAL,
           };
 
-          const orientationAxis = orientationMap[orientation.toLowerCase()] || orientationMap.axial;
+          const orientationAxis = orientationMap[props.viewportOptions?.orientation || 'axial'];
 
           // Type cast to VolumeViewport to access setOrientation method
           await (viewport as cornerstone.Types.IVolumeViewport).setOrientation(orientationAxis);
@@ -84,43 +79,63 @@ const OHIFCornerstoneNiftiViewport = props => {
             voiRange: { lower: -1000, upper: 1000 },
             slabThickness: 0.1,
           });
-        }
 
-        // Set the volume color and opacity
-        viewport.render();
+          // Set the volume color and opacity
+          viewport.render();
+        }
       } catch (error) {
-        console.error('Error loading NIfTI volume:', error);
+        console.error('Error loading NIFTI file:', error);
       }
+
+      // Call the original onElementEnabled callback if it exists
+      props.onElementEnabled?.(elementEnabledEvt);
     },
   };
 
-  // Render the cornerstone viewport with modified props
   return CornerstoneViewport(modifiedProps);
 };
 
 /**
- * Viewport Module definition for NIfTI viewport
+ * This extension's getSopClassHandlerModule returns a function
+ * that maps a SOP Class to a ViewportType.
+ *
+ * @returns {object} The SOPClassHandler module
  */
 function getViewportModule({ servicesManager, extensionManager }) {
-  const ExtendedCornerstoneViewport = props => {
-    // Get the cornerstone viewport from the extension
+  /**
+   * IMPORTANT: As cornerstone-nifti doesn't have an explicit SOP Class, we need
+   * to detect if a displayset is a NIfTI display set and handle it appropriately.
+   *
+   * This function should return:
+   * - ViewportComponent, to render the viewport
+   * - getToolbarModule, a function to get toolbar configuration
+   * - HangingProtocolService, a service to get hanging protocol configuration
+   */
+  const ExtendedOHIFCornerstoneViewport = props => {
+    const { displaySet } = props;
+
+    // Check if this is a NIFTI dataset
+    if (
+      displaySet.isNifti ||
+      displaySet.SOPClassHandlerId === 'nifti' ||
+      displaySet.Modality === 'NIFTI'
+    ) {
+      return OHIFCornerstoneNiftiViewport(props);
+    }
+
+    // If not NIFTI, get the regular cornerstone viewport component
     const CornerstoneViewport = extensionManager.getModuleEntry(
       '@ohif/extension-cornerstone.viewportModule.cornerstone'
     );
 
-    // Pass the get enabled element function
-    const getEnabledElement = () => CornerstoneViewport;
-
-    return OHIFCornerstoneNiftiViewport({
-      ...props,
-      getEnabledElement,
-    });
+    // Return the regular cornerstone viewport
+    return CornerstoneViewport(props);
   };
 
   return [
     {
-      name: 'nifti',
-      component: ExtendedCornerstoneViewport,
+      name: 'cornerstone-nifti',
+      component: ExtendedOHIFCornerstoneViewport,
     },
   ];
 }

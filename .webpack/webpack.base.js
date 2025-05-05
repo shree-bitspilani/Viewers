@@ -1,3 +1,6 @@
+// ~~ FIX WEBPACK HASH ISSUE
+require('./fix-webpack-hash');
+
 // ~~ ENV
 const dotenv = require('dotenv');
 //

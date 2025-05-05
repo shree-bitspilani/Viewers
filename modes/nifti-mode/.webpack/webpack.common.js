@@ -1,7 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
+const hashFix = require('../../../.webpack/fix-webpack-hash');
 
 const ENTRY_VR = path.join(__dirname, '../src/index.ts');
+
+// Monkey patch Node.js process to use xxhash64 instead of wasm hash
+process.variants = { ...(process.variants || {}), ...{ webkit: false } };
 
 module.exports = (env, argv) => ({
   stats: {
@@ -25,6 +29,7 @@ module.exports = (env, argv) => ({
     path: path.resolve(__dirname, '../dist'),
     umdNamedDefine: false,
     globalObject: 'this',
+    hashFunction: 'xxhash64',
   },
   module: {
     rules: [

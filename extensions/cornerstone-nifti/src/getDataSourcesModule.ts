@@ -1,6 +1,7 @@
 import { createNiftiImageIdsAndCacheMetadata } from '@cornerstonejs/nifti-volume-loader';
 import React, { useState } from 'react';
 import { NiftiUploadDialog } from './components';
+import { Types } from '@ohif/core';
 
 type StudyMetadata = {
   StudyInstanceUID: string;
@@ -339,6 +340,120 @@ function getDataSourcesModule({ servicesManager, extensionManager }) {
         console.log('NIfTI Extension: niftiDataSource created');
 
         return niftiDataSource;
+      },
+    },
+    {
+      name: 'niftiLocalDataSource',
+      type: 'localApi',
+      createDataSource: (configuration = {}) => {
+        const niftiLocalDataSource = {
+          initialize: async () => {},
+          query: {
+            studies: {
+              search: async filters => {
+                // Get stored NIFTI studies from localStorage
+                const niftiStudies = JSON.parse(localStorage.getItem('ohif-nifti-studies') || '[]');
+
+                // Return the studies formatted for OHIF
+                return {
+                  studies: niftiStudies.map(study => ({
+                    studyInstanceUid: study.studyInstanceUID,
+                    date: study.studyDate,
+                    time: study.studyTime,
+                    patientId: study.patientId,
+                    patientName: study.patientName,
+                    accessionNumber: study.accessionNumber,
+                    modalities: study.modality,
+                    description: study.description,
+                    instances: study.seriesList.reduce((sum, series) => sum + series.instances, 0),
+                  })),
+                };
+              },
+            },
+            series: {
+              search: async studyInstanceUID => {
+                // Get stored NIFTI studies from localStorage
+                const niftiStudies = JSON.parse(localStorage.getItem('ohif-nifti-studies') || '[]');
+                const study = niftiStudies.find(
+                  study => study.studyInstanceUID === studyInstanceUID
+                );
+
+                if (!study) {
+                  return { seriesList: [] };
+                }
+
+                // Return the series formatted for OHIF
+                return {
+                  seriesList: study.seriesList.map(series => ({
+                    seriesInstanceUid: series.seriesInstanceUID,
+                    seriesNumber: series.seriesNumber,
+                    seriesDescription: series.seriesDescription,
+                    modality: 'NIFTI',
+                    instances: series.instances,
+                    niftiURL: series.niftiURL,
+                  })),
+                };
+              },
+            },
+            instances: {
+              search: async filters => {
+                // Return an empty array as we don't need instance-level data for NIFTI files
+                return [];
+              },
+            },
+          },
+          retrieve: {
+            series: {
+              metadata: async (studyInstanceUID, seriesInstanceUID) => {
+                // Get the NIFTI series metadata from localStorage
+                const niftiStudies = JSON.parse(localStorage.getItem('ohif-nifti-studies') || '[]');
+                const study = niftiStudies.find(
+                  study => study.studyInstanceUID === studyInstanceUID
+                );
+
+                if (!study) {
+                  return [];
+                }
+
+                const series = study.seriesList.find(
+                  series => series.seriesInstanceUID === seriesInstanceUID
+                );
+
+                if (!series) {
+                  return [];
+                }
+
+                // Create a simple metadata object for the NIFTI file
+                return [
+                  {
+                    StudyInstanceUID: studyInstanceUID,
+                    SeriesInstanceUID: seriesInstanceUID,
+                    SOPInstanceUID: `nifti-instance-${Date.now()}`,
+                    Modality: 'NIFTI',
+                    SeriesDescription: series.seriesDescription,
+                    SeriesNumber: series.seriesNumber,
+                    StudyDescription: study.description,
+                    PatientName: study.patientName,
+                    PatientID: study.patientId,
+                    niftiURL: series.niftiURL,
+                    Rows: 256,
+                    Columns: 256,
+                    NumberOfFrames: 1,
+                    isNifti: true,
+                  },
+                ];
+              },
+            },
+          },
+          store: {
+            dicom: () => {
+              throw new Error('Not implemented');
+            },
+          },
+          getConfig: () => configuration,
+        };
+
+        return niftiLocalDataSource;
       },
     },
   ];

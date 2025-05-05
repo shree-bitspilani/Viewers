@@ -1,3 +1,3 @@
-import NiftiUploadDialog from './NiftiUploadDialog';
+import NiftiUploadDialog from './NiftiUpload/NiftiUploadDialog';
 
 export { NiftiUploadDialog };

@@ -15,6 +15,7 @@ const StudyListFilter = ({
   isFiltering,
   numOfStudies,
   onUploadClick,
+  onNiftiUploadClick,
   getDataSourceConfigurationComponent,
 }) => {
   const { t } = useTranslation('StudyList');
@@ -48,7 +49,16 @@ const StudyListFilter = ({
                     onClick={onUploadClick}
                   >
                     <Icons.Upload />
-                    <span>{t('Upload')}</span>
+                    <span>{t('Upload DICOM')}</span>
+                  </div>
+                )}
+                {onNiftiUploadClick && (
+                  <div
+                    className="text-primary-active flex cursor-pointer items-center gap-2 self-center text-lg font-semibold"
+                    onClick={onNiftiUploadClick}
+                  >
+                    <Icons.Upload />
+                    <span>{t('Upload NIFTI')}</span>
                   </div>
                 )}
               </div>
@@ -138,6 +148,7 @@ StudyListFilter.propTypes = {
   clearFilters: PropTypes.func.isRequired,
   isFiltering: PropTypes.bool.isRequired,
   onUploadClick: PropTypes.func,
+  onNiftiUploadClick: PropTypes.func,
   getDataSourceConfigurationComponent: PropTypes.func,
 };
 

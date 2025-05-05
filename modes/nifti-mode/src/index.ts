@@ -23,8 +23,7 @@ function modeFactory({ modeConfiguration }) {
      * Lifecycle hooks
      */
     onModeEnter: ({ servicesManager, extensionManager, commandsManager }) => {
-      const { toolbarService, hangingProtocolService, uiNotificationService } =
-        servicesManager.services;
+      const { toolbarService, hangingProtocolService } = servicesManager.services;
 
       toolbarService.init(extensionManager);
       toolbarService.addButtons(toolbarButtons);
@@ -64,9 +63,9 @@ function modeFactory({ modeConfiguration }) {
           return {
             id: 'ohif.layout',
             props: {
-              leftPanels: ['ohif.thumbnailList'],
+              leftPanels: ['@ohif/extension-default.seriesList'],
               leftPanelResizable: true,
-              rightPanels: ['ohif.measurements'],
+              rightPanels: ['@ohif/extension-measurement-tracking.trackedMeasurements'],
               rightPanelResizable: true,
               viewports: [
                 {
@@ -84,9 +83,9 @@ function modeFactory({ modeConfiguration }) {
           return {
             id: 'ohif.layout',
             props: {
-              leftPanels: ['ohif.thumbnailList'],
+              leftPanels: ['@ohif/extension-default.seriesList'],
               leftPanelResizable: true,
-              rightPanels: ['ohif.measurements'],
+              rightPanels: ['@ohif/extension-measurement-tracking.trackedMeasurements'],
               rightPanelResizable: true,
               viewports: [
                 {
@@ -120,6 +119,7 @@ function modeFactory({ modeConfiguration }) {
       '@ohif/extension-default': '^3.0.0',
       '@ohif/extension-cornerstone': '^3.0.0',
       '@ohif/extension-cornerstone-nifti': '^3.0.0',
+      '@ohif/extension-measurement-tracking': '^3.0.0',
     },
     hangingProtocol: 'default',
     // Order of the datasources in the datasources selector dropdown
@@ -155,6 +155,7 @@ const mode = {
     '@ohif/extension-default': '^3.0.0',
     '@ohif/extension-cornerstone': '^3.0.0',
     '@ohif/extension-cornerstone-nifti': '^3.0.0',
+    '@ohif/extension-measurement-tracking': '^3.0.0',
   },
 };
 
